@@ -18,7 +18,6 @@ public class SalvarTarefaTask extends AsyncTask<Void,Void,Void > {
         this.tarefa = tarefa;
     }
 
-
     @Override
     protected Void doInBackground(Void... voids) {
         dao.salvar(tarefa);

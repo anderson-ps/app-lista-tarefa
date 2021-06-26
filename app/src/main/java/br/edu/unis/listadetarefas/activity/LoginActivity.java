@@ -5,20 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.HashMap;
-
-import javax.crypto.Cipher;
-import javax.crypto.EncryptedPrivateKeyInfo;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-
 import br.edu.unis.listadetarefas.R;
+import br.edu.unis.listadetarefas.asynctask.AutenticarUsuariotask;
 import br.edu.unis.listadetarefas.model.MinhasPreferencias;
 import br.edu.unis.listadetarefas.room.TarefaDatabase;
 import br.edu.unis.listadetarefas.room.dao.RoomUsuarioDAO;
@@ -94,7 +87,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void autenticar() {
-        if (autorizaCredenciais()) {
+
+       if (autorizaCredenciais()) {
             salvarPreferencias();
             abreListaDeTarefas();
             finish();
