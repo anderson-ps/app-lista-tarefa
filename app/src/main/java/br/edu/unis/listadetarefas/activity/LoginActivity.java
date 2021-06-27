@@ -59,7 +59,13 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG
                     ).show();
                 } else {
-                    autenticar();
+
+                    RoomUsuarioDAO dao = TarefaDatabase.getUsuarioDAOInstance(getApplicationContext());
+
+                    String usuario = txtUsuario.getText().toString();
+                    String senha = txtSenha.getText().toString();
+
+                    new AutenticarUsuariotask(dao,getApplicationContext()).execute(usuario,senha);
                 }
             }
         });
@@ -86,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
         return false;
     }
 
-    private void autenticar() {
+   /* private void autenticar() {
 
        if (autorizaCredenciais()) {
             salvarPreferencias();
@@ -95,27 +101,29 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Usuario ou Senha Incorretos", Toast.LENGTH_LONG).show();
         }
-    }
+    }*/
 
-    private boolean autorizaCredenciais() {
+   /* private boolean autorizaCredenciais() {
         String usuario = txtUsuario.getText().toString();
         String senha = txtSenha.getText().toString();
 
         RoomUsuarioDAO dao = TarefaDatabase.getUsuarioDAOInstance(this);
-        Usuario usuarioRecuperado = dao.autenticarUsuario(usuario, senha);
 
-        if (usuarioRecuperado != null && usuario.equals(usuarioRecuperado.getUsuario())) {
+        Usuario usuarioRecuperado = dao.autenticarUsuario(usuario, senha);
+        Object x = new AutenticarUsuariotask(dao,usuario,senha).execute();
+
+        if (x != null && usuario.equals(x.getUsuario())) {
             return true;
         }
 
         return false;
-    }
+    }*/
 
-    private void salvarPreferencias() {
+    /*private void salvarPreferencias() {
         SharedPreferences.Editor editor = MinhasPreferencias.getMinhasPreferenciasEditor(this);
         editor.putString(MinhasPreferencias.PREFERENCIA_USUARIO, txtUsuario.getText().toString());
         editor.commit();
-    }
+    }*/
 
     private void abreListaDeTarefas() {
         startActivity(new Intent(

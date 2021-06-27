@@ -1,46 +1,70 @@
 package br.edu.unis.listadetarefas.asynctask;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.widget.Toast;
 
+import br.edu.unis.listadetarefas.activity.ListaTarefasActivity;
+import br.edu.unis.listadetarefas.model.MinhasPreferencias;
 import br.edu.unis.listadetarefas.room.dao.RoomUsuarioDAO;
 import br.edu.unis.listadetarefas.room.entity.Usuario;
 
-public class AutenticarUsuariotask extends AsyncTask<Void,Void,Boolean> {
+public class AutenticarUsuariotask extends AsyncTask<String,Void,Usuario> {
 
     private final RoomUsuarioDAO dao;
-    private final
-    String usuario;
-    String senha;
-    boolean autenticado;
+    private final Context context;
+    private boolean found;
 
-    public AutenticarUsuariotask(RoomUsuarioDAO dao, String usuario,String senha) {
+    public AutenticarUsuariotask(RoomUsuarioDAO dao, Context context) {
         this.dao = dao;
-        this.usuario = usuario;
-        this.senha = senha;
+        this.context = context;
     }
 
 
     @Override
-    protected Boolean doInBackground(Void...Void) {
+    protected Usuario doInBackground(String... strings) {
+        String nome = strings[0];
+        String senha = strings[1];
 
+        Usuario usuarioRec = dao.autenticarUsuario(nome,senha);
 
-        Usuario usuarioRecuperado = dao.autenticarUsuario(usuario, senha);
-
-        if (usuarioRecuperado != null && usuario.equals(usuarioRecuperado.getUsuario())) {
-            autenticado = true ;
-        }else{
-            autenticado = false;
+        if(usuarioRec != null){
+            this.found = true;
         }
+        return usuarioRec;
 
-        return autenticado;
     }
 
     @Override
-    protected void onPostExecute(Boolean autenticado) {
+    protected void onPostExecute(Usuario usuario) {
 
-        super.onPostExecute(autenticado);
+        if(found == false){
+            Toast.makeText(this.context,"Usuario ou Senha Incorretos" , Toast.LENGTH_LONG).show();
+        }else{
+            salvarPreferencias(usuario.getUsuario());
+            abreListaDeTarefas();
 
+        }
+        super.onPostExecute(usuario);
+    }
+
+    public void abreListaDeTarefas() {
+
+        Intent intent = new Intent(this.context, ListaTarefasActivity.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        this.context.startActivity(intent);
+
+    }
+
+    public void salvarPreferencias(String name) {
+        SharedPreferences.Editor editor = MinhasPreferencias.getMinhasPreferenciasEditor(this.context);
+        editor.putString(MinhasPreferencias.PREFERENCIA_USUARIO, name);
+        editor.commit();
     }
 
 }
